@@ -10,7 +10,7 @@ RUN apt-get update \
 	&& git clone https://github.com/pinterest/secor.git \
 	&& cd secor && mvn clean package && cd .. \
 	&& mkdir /opt/secor \
-	&& tar zxvf secor/target/secor-0.1-SNAPSHOT-bin.tar.gz -C /opt/secor \
+	&& tar zxvf secor/target/secor-0.16-SNAPSHOT-bin.tar.gz -C /opt/secor \
 	&& apt-get purge -y --auto-remove $BUILD_DEPS \
 	&& rm -rf secor
 

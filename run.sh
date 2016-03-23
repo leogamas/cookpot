@@ -2,8 +2,23 @@
 
 set -e
 
-if [ "$1" = 'consumer' ]; then
-  java -ea -Dsecor.kafka.group=${SECOR_GROUP} \
+: ${AWS_ACCESS_KEY:?not set}
+: ${AWS_SECRET_KEY:?not set}
+: ${ZK_QUORUM:?not set}
+: ${SEED_BROKER_HOST:?not set}
+: ${S3_BUCKET:?not set}
+
+: ${SECOR_GROUP:=secor_backup}
+: ${ZK_PATH:=/}
+: ${SEED_BROKER_PORT:=9092}
+: ${S3_PATH:=raw_logs/secor_backup}
+: ${TOPIC_FILTER:=.*}
+: ${MESSAGE_PARSER_CLASS:=com.pinterest.secor.parser.OffsetMessageParser}
+: ${TS_NAME:=timestamp}
+: ${LOCAL_PATH:=/mnt/secor_data/message_logs/backup}
+: ${READER_WRITER_FACTORY:=com.pinterest.secor.io.impl.SequenceFileReaderWriterFactory}
+
+java -ea -Dsecor.kafka.group=${SECOR_GROUP} \
 	-Daws.access.key=${AWS_ACCESS_KEY} \
 	-Daws.secret.key=${AWS_SECRET_KEY} \
 	-Dzookeeper.quorum=${ZK_QUORUM} \
@@ -20,9 +35,6 @@ if [ "$1" = 'consumer' ]; then
 	-Dsecor.compression.codec=${COMPRESSION_CODEC} \
 	-Dlog4j.configuration=log4j.prod.properties \
 	-Dconfig=secor.prod.backup.properties \
-	-cp secor-0.1-SNAPSHOT.jar:lib/* \
+	-cp secor-0.16-SNAPSHOT.jar:lib/* \
 	com.pinterest.secor.main.ConsumerMain
-fi
-
-exec "$@"
 
