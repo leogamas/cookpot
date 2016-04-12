@@ -17,6 +17,8 @@ set -e
 : ${TS_NAME:=timestamp}
 : ${LOCAL_PATH:=/mnt/secor_data/message_logs/backup}
 : ${READER_WRITER_FACTORY:=com.pinterest.secor.io.impl.SequenceFileReaderWriterFactory}
+: ${FILE_MAX_SECONDS:=21600}   # 6 hours
+: ${FILE_MAX_SIZE:=200000000}  # 200 MB
 
 java -ea -Dsecor.kafka.group=${SECOR_GROUP} \
 	-Daws.access.key=${AWS_ACCESS_KEY} \
@@ -33,6 +35,8 @@ java -ea -Dsecor.kafka.group=${SECOR_GROUP} \
 	-Dsecor.local.path=${LOCAL_PATH} \
 	-Dsecor.file.reader.writer.factory=${READER_WRITER_FACTORY} \
 	-Dsecor.compression.codec=${COMPRESSION_CODEC} \
+	-Dsecor.max.file.size.bytes=${FILE_MAX_SIZE} \
+	-Dsecor.max.file.age.seconds=${FILE_MAX_SECONDS} \
 	-Dlog4j.configuration=log4j.prod.properties \
 	-Dconfig=secor.prod.backup.properties \
 	-cp secor-0.16-SNAPSHOT.jar:lib/* \
