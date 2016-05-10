@@ -37,8 +37,8 @@ java -ea -Dsecor.kafka.group=${SECOR_GROUP} \
 	-Dsecor.compression.codec=${COMPRESSION_CODEC} \
 	-Dsecor.max.file.size.bytes=${FILE_MAX_SIZE} \
 	-Dsecor.max.file.age.seconds=${FILE_MAX_SECONDS} \
+  -Dschema.registry.url=${SCHEMA_REGISTRY_URL} \
 	-Dlog4j.configuration=log4j.prod.properties \
 	-Dconfig=secor.prod.backup.properties \
-	-cp secor-0.16-SNAPSHOT.jar:lib/* \
+	-cp secor-0.20-SNAPSHOT.jar:lib/* \
 	com.pinterest.secor.main.ConsumerMain
-

@@ -7,10 +7,10 @@ ENV RUNTIME_DEPS openjdk-7-jre-headless
 
 RUN apt-get update \
 	&& apt-get install -y $BUILD_DEPS $RUNTIME_DEPS --no-install-recommends \
-	&& git clone https://github.com/pinterest/secor.git \
+	&& git clone https://github.com/revpoint/secor.git \
 	&& cd secor && mvn clean package && cd .. \
 	&& mkdir /opt/secor \
-	&& tar zxvf secor/target/secor-0.16-SNAPSHOT-bin.tar.gz -C /opt/secor \
+	&& tar zxvf secor/target/secor-0.20-SNAPSHOT-bin.tar.gz -C /opt/secor \
 	&& apt-get purge -y --auto-remove $BUILD_DEPS \
 	&& rm -rf secor
 
@@ -19,4 +19,3 @@ ADD run.sh /opt/secor/run.sh
 WORKDIR /opt/secor
 
 ENTRYPOINT ["/opt/secor/run.sh"]
-
