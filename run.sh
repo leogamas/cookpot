@@ -8,6 +8,7 @@ set -e
 : ${SEED_BROKER_HOST:?not set}
 : ${S3_BUCKET:?not set}
 
+: ${SCHEMA_REGISTRY_URL:=http://$HOST:8081}
 : ${SECOR_GROUP:=secor_backup}
 : ${ZK_PATH:=/}
 : ${SEED_BROKER_PORT:=9092}
@@ -15,12 +16,16 @@ set -e
 : ${TOPIC_FILTER:=.*}
 : ${MESSAGE_PARSER_CLASS:=com.pinterest.secor.parser.OffsetMessageParser}
 : ${TS_NAME:=timestamp}
+: ${TIMEZONE:=America/New_York}
 : ${LOCAL_PATH:=/mnt/secor_data/message_logs/backup}
 : ${READER_WRITER_FACTORY:=com.pinterest.secor.io.impl.SequenceFileReaderWriterFactory}
 : ${FILE_MAX_SECONDS:=21600}   # 6 hours
 : ${FILE_MAX_SIZE:=200000000}  # 200 MB
+: ${CONFIG_FILE:=secor.prod.backup.properties}
+: ${LOG_CONFIG_FILE:=log4j.prod.properties}
 
-java -ea -Dsecor.kafka.group=${SECOR_GROUP} \
+java -ea \
+	-Dsecor.kafka.group=${SECOR_GROUP} \
 	-Daws.access.key=${AWS_ACCESS_KEY} \
 	-Daws.secret.key=${AWS_SECRET_KEY} \
 	-Dzookeeper.quorum=${ZK_QUORUM} \
@@ -37,8 +42,9 @@ java -ea -Dsecor.kafka.group=${SECOR_GROUP} \
 	-Dsecor.compression.codec=${COMPRESSION_CODEC} \
 	-Dsecor.max.file.size.bytes=${FILE_MAX_SIZE} \
 	-Dsecor.max.file.age.seconds=${FILE_MAX_SECONDS} \
-  -Dschema.registry.url=${SCHEMA_REGISTRY_URL} \
-	-Dlog4j.configuration=log4j.prod.properties \
-	-Dconfig=secor.prod.backup.properties \
+	-Dschema.registry.url=${SCHEMA_REGISTRY_URL} \
+	-Dsecor.parser.timezone=${TIMEZONE} \
+	-Dlog4j.configuration=${LOG_CONFIG_FILE} \
+	-Dconfig=${CONFIG_FILE} \
 	-cp secor-0.20-SNAPSHOT.jar:lib/* \
 	com.pinterest.secor.main.ConsumerMain
