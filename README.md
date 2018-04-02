@@ -12,13 +12,13 @@ https://github.com/pinterest/secor
 
 ## optional env/defaults
 
-- `MESSAGE_PARSER_CLASS` = `secor.message.parser.class=com.pinterest.secor.parser.AvroMessageParser`
-- `USE_KAFKA_TIMESTAMP` = `kafka.useTimestamp=true`
-- `READER_WRITER_FACTORY` = `secor.file.reader.writer.factory=com.pinterest.secor.io.impl.AvroParquetFileReaderWriterFactory`
-- `SCHEMA_REGISTRY_URL` = `schema.registry.url=http://$HOST:8081`
-- `TIMEZONE` = `secor.parser.timezone=America/New_York`
-- `LOG_DELETE_AGE_HOURS` = `secor.local.log.delete.age.hours=24`
-- `SCHEMA_SUBJECT_SUFFIX` = `avro.schema.subject.suffix=-value`
+- `MESSAGE_PARSER_CLASS` = `secor.message.parser.class` (com.pinterest.secor.parser.AvroMessageParser)
+- `USE_KAFKA_TIMESTAMP` = `kafka.useTimestamp` (true)
+- `READER_WRITER_FACTORY` = `secor.file.reader.writer.factory` (com.pinterest.secor.io.impl.AvroParquetFileReaderWriterFactory)
+- `SCHEMA_REGISTRY_URL` = `schema.registry.url` (http://$HOST:8081)
+- `TIMEZONE` = `secor.parser.timezone` (America/New_York)
+- `LOG_DELETE_AGE_HOURS` = `secor.local.log.delete.age.hours` (24)
+- `SCHEMA_SUBJECT_SUFFIX` = `avro.schema.subject.suffix` (-value)
 
 - `SEED_BROKER_PORT` = `kafka.seed.broker.port`
 - `ZK_PATH` = `kafka.zookeeper.path`
