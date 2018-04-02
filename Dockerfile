@@ -1,20 +1,21 @@
-FROM ubuntu:14.04
+FROM openjdk:8
 
-MAINTAINER Leonardo Gamas <leogamas@gmail.com>
+MAINTAINER Ryan Anguiano <ryan@revpointmedia.com>
 
-ENV BUILD_DEPS git openjdk-7-jdk maven
-ENV RUNTIME_DEPS openjdk-7-jre-headless
+ENV BUILD_DEPS git maven make
+ENV SECOR_REPO https://github.com/revpoint/secor.git
+ENV SECOR_VERSION origin/schema_registry_value_topic_name
 
 RUN apt-get update \
-	&& apt-get install -y $BUILD_DEPS $RUNTIME_DEPS --no-install-recommends \
-	&& git clone https://github.com/revpoint/secor.git \
-	&& cd secor && mvn clean package && cd .. \
+	&& apt-get install -y $BUILD_DEPS --no-install-recommends \
+	&& git clone $SECOR_REPO && cd secor && git checkout $SECOR_VERSION \
+    && make build \
 	&& mkdir /opt/secor \
-	&& tar zxvf secor/target/secor-0.20-SNAPSHOT-bin.tar.gz -C /opt/secor \
-	&& apt-get purge -y --auto-remove $BUILD_DEPS \
-	&& rm -rf secor
+	&& tar zxvf target/secor-*.tar.gz -C /opt/secor \
+	&& cd .. && rm -rf secor \
+	&& apt-get purge -y --auto-remove $BUILD_DEPS
 
-ADD run.sh /opt/secor/run.sh
+ADD config.sh run.sh /opt/secor/
 
 WORKDIR /opt/secor
 

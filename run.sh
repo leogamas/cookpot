@@ -1,50 +1,16 @@
 #!/bin/bash
-
 set -e
 
-: ${AWS_ACCESS_KEY:?not set}
-: ${AWS_SECRET_KEY:?not set}
-: ${ZK_QUORUM:?not set}
-: ${SEED_BROKER_HOST:?not set}
-: ${S3_BUCKET:?not set}
+source config.sh
 
-: ${SCHEMA_REGISTRY_URL:=http://$HOST:8081}
-: ${SECOR_GROUP:=secor_backup}
-: ${ZK_PATH:=/}
-: ${SEED_BROKER_PORT:=9092}
-: ${S3_PATH:=raw_logs/secor_backup}
-: ${TOPIC_FILTER:=.*}
-: ${MESSAGE_PARSER_CLASS:=com.pinterest.secor.parser.OffsetMessageParser}
-: ${TS_NAME:=timestamp}
-: ${TIMEZONE:=America/New_York}
-: ${LOCAL_PATH:=/mnt/secor_data/message_logs/backup}
-: ${READER_WRITER_FACTORY:=com.pinterest.secor.io.impl.SequenceFileReaderWriterFactory}
-: ${FILE_MAX_SECONDS:=21600}   # 6 hours
-: ${FILE_MAX_SIZE:=200000000}  # 200 MB
 : ${CONFIG_FILE:=secor.prod.backup.properties}
-: ${LOG_CONFIG_FILE:=log4j.prod.properties}
+: ${LOG_CONFIG_FILE:=log4j.docker.properties}
+: ${CLASSPATH:="*:lib/*"}
+: ${JVM_MEMORY:=1024m}
 
-java -ea \
-	-Dsecor.kafka.group=${SECOR_GROUP} \
-	-Daws.access.key=${AWS_ACCESS_KEY} \
-	-Daws.secret.key=${AWS_SECRET_KEY} \
-	-Dzookeeper.quorum=${ZK_QUORUM} \
-	-Dkafka.zookeeper.path=${ZK_PATH} \
-	-Dkafka.seed.broker.host=${SEED_BROKER_HOST} \
-	-Dkafka.seed.broker.port=${SEED_BROKER_PORT} \
-	-Dsecor.s3.bucket=${S3_BUCKET} \
-	-Dsecor.s3.path=${S3_PATH} \
-	-Dsecor.kafka.topic_filter=${TOPIC_FILTER} \
-	-Dsecor.message.parser.class=${MESSAGE_PARSER_CLASS} \
-	-Dmessage.timestamp.name=${TS_NAME} \
-	-Dsecor.local.path=${LOCAL_PATH} \
-	-Dsecor.file.reader.writer.factory=${READER_WRITER_FACTORY} \
-	-Dsecor.compression.codec=${COMPRESSION_CODEC} \
-	-Dsecor.max.file.size.bytes=${FILE_MAX_SIZE} \
-	-Dsecor.max.file.age.seconds=${FILE_MAX_SECONDS} \
-	-Dschema.registry.url=${SCHEMA_REGISTRY_URL} \
-	-Dsecor.parser.timezone=${TIMEZONE} \
-	-Dlog4j.configuration=${LOG_CONFIG_FILE} \
-	-Dconfig=${CONFIG_FILE} \
-	-cp secor-0.20-SNAPSHOT.jar:lib/* \
-	com.pinterest.secor.main.ConsumerMain
+java -Xmx${JVM_MEMORY} $JAVA_OPTS -ea \
+    -Dconfig=${CONFIG_FILE} \
+    -Dlog4j.configuration=${LOG_CONFIG_FILE} \
+    ${SECOR_CONFIG} ${SECOR_EXTRA_OPTS} \
+    -cp $CLASSPATH \
+    com.pinterest.secor.main.ConsumerMain

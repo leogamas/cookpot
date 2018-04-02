@@ -11,14 +11,23 @@ https://github.com/pinterest/secor
 - `S3_BUCKET`
 
 ## optional env/defaults
-- `SECOR_GROUP` = `secor_backup`
-- `ZK_PATH` = `/`
-- `SEED_BROKER_PORT` = `9092`
-- `S3_PATH` = `raw_logs/secor_backup`
-- `TOPIC_FILTER` = `.*`
-- `MESSAGE_PARSER_CLASS` = `com.pinterest.secor.parser.OffsetMessageParser`
-- `TS_NAME` = `timestamp`
-- `LOCAL_PATH` = `/mnt/secor_data/message_logs/backup`
-- `READER_WRITER_FACTORY` = `com.pinterest.secor.io.impl.SequenceFileReaderWriterFactory`
-- `COMPRESSION_CODEC` = ` `
 
+- `MESSAGE_PARSER_CLASS` = `secor.message.parser.class=com.pinterest.secor.parser.AvroMessageParser`
+- `USE_KAFKA_TIMESTAMP` = `kafka.useTimestamp=true`
+- `READER_WRITER_FACTORY` = `secor.file.reader.writer.factory=com.pinterest.secor.io.impl.AvroParquetFileReaderWriterFactory`
+- `SCHEMA_REGISTRY_URL` = `schema.registry.url=http://$HOST:8081`
+- `TIMEZONE` = `secor.parser.timezone=America/New_York`
+- `LOG_DELETE_AGE_HOURS` = `secor.local.log.delete.age.hours=24`
+- `SCHEMA_SUBJECT_SUFFIX` = `avro.schema.subject.suffix=-value`
+
+- `SEED_BROKER_PORT` = `kafka.seed.broker.port`
+- `ZK_PATH` = `kafka.zookeeper.path`
+- `PARTITION_HOUR` = `partitioner.granularity.hour`
+- `PARTITION_MINUTE` = `partitioner.granularity.minute`
+- `SECOR_GROUP` = `secor.kafka.group`
+- `TOPIC_FILTER` = `secor.kafka.topic_filter`
+- `LOCAL_PATH` = `secor.local.path`
+- `FILE_MAX_SECONDS` = `secor.max.file.age.seconds`
+- `FILE_MAX_SIZE` = `secor.max.file.size.bytes`
+- `S3_PATH` = `secor.s3.path`
+- `SCHEMA_SUBJECT_OVERRIDE` = `avro.schema.subject.override`
