@@ -1,28 +1,16 @@
 #!/bin/bash
-
 set -e
 
-if [ "$1" = 'consumer' ]; then
-  java -ea -Dsecor.kafka.group=${SECOR_GROUP} \
-	-Daws.access.key=${AWS_ACCESS_KEY} \
-	-Daws.secret.key=${AWS_SECRET_KEY} \
-	-Dzookeeper.quorum=${ZK_QUORUM} \
-	-Dkafka.zookeeper.path=${ZK_PATH} \
-	-Dkafka.seed.broker.host=${SEED_BROKER_HOST} \
-	-Dkafka.seed.broker.port=${SEED_BROKER_PORT} \
-	-Dsecor.s3.bucket=${S3_BUCKET} \
-	-Dsecor.s3.path=${S3_PATH} \
-	-Dsecor.kafka.topic_filter=${TOPIC_FILTER} \
-	-Dsecor.message.parser.class=${MESSAGE_PARSER_CLASS} \
-	-Dmessage.timestamp.name=${TS_NAME} \
-	-Dsecor.local.path=${LOCAL_PATH} \
-	-Dsecor.file.reader.writer.factory=${READER_WRITER_FACTORY} \
-	-Dsecor.compression.codec=${COMPRESSION_CODEC} \
-	-Dlog4j.configuration=log4j.prod.properties \
-	-Dconfig=secor.prod.backup.properties \
-	-cp secor-0.1-SNAPSHOT.jar:lib/* \
-	com.pinterest.secor.main.ConsumerMain
-fi
+source config.sh
 
-exec "$@"
+: ${CONFIG_FILE:=secor.prod.backup.properties}
+: ${LOG_CONFIG_FILE:=log4j.docker.properties}
+: ${CLASSPATH:="*:lib/*"}
+: ${JVM_MEMORY:=1024m}
 
+java -Xmx${JVM_MEMORY} $JAVA_OPTS -ea \
+    -Dconfig=${CONFIG_FILE} \
+    -Dlog4j.configuration=${LOG_CONFIG_FILE} \
+    ${SECOR_CONFIG} ${SECOR_EXTRA_OPTS} \
+    -cp $CLASSPATH \
+    com.pinterest.secor.main.ConsumerMain
